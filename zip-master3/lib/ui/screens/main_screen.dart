@@ -53,6 +53,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   //this is the global key used for the scaffold
+ // MapScreen _mapScreen;
+
+  bool _scrollGesturesEnabled = true;
+  bool _tiltGesturesEnabled = true;
+  bool _rotateGesturesEnabled = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GlobalKey<MapScreen> mapScaffoldKey;
   double screenHeight, screenWidth;
@@ -63,6 +68,57 @@ class _MainScreenState extends State<MainScreen> {
   Map<String, Marker> _destinationMarkers = {};
   bool _isMapInteractive = false;
   LatLngBounds _cameraTargetBounds;
+  //final Function setPolylinesCallback;
+  //_MainScreenState({this.setPolylinesCallback});
+  /*void setPolylines() async {
+    if (_initialPosition != null && _destinationPin != null) {
+      polylineCoordinates.clear(); // Clear the previous polyline coordinates
+      _polylines.clear(); // Clear the previous polylines
+      String apiKey = "AIzaSyDsPh6P9PDFmOqxBiLXpzJ1sW4kx-2LN5g";
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
+          apiKey,
+          _initialPosition.latitude,
+          _initialPosition.longitude,
+          _destinationPin.latitude,
+          _destinationPin.longitude);
+      // Print the raw result to the console
+      // print("Raw result: $result");
+
+      if (result.isNotEmpty) {
+        // result.forEach((PointLatLng point) {
+        // polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        // });
+
+        // Print the polylineCoordinates list to the console
+        // print("Polyline coordinates: $polylineCoordinates");
+
+        result.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+
+        setState(() {
+          Polyline polyline = Polyline(
+              polylineId: PolylineId("p"),
+              color: Colors.blue,
+              points: polylineCoordinates);
+          _polylines.add(polyline);
+        });
+      }
+    }
+    await _goToDestination(_destinationPin);
+  }
+
+  Future<void> _goToDestination(LatLng destination) async {
+    if (destination != null) {
+      print("Moving to destination: ${destination.latitude}, ${destination.longitude}");
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(destination.latitude, destination.longitude),
+          zoom: 14.47)));
+    }
+  }*/
+
 
 
 
@@ -92,6 +148,8 @@ class _MainScreenState extends State<MainScreen> {
   bool paccepted = true;
 
   bool pinDropDestination = false;
+
+  //bool _zoomGesturesEnabled = true;
 
   //bool _menuVisible;
   //bool termsSelect;
@@ -165,19 +223,11 @@ class _MainScreenState extends State<MainScreen> {
   //This method checks to see if the user in firebase has accepted the TC and Privacy Policy
   void _checkLegal() async {
     //Calls the reference documents for all users
-<<<<<<< HEAD
     DocumentReference termsandConditionsAcceptanceRef =
         _firestore.collection('users').doc(userService.user.uid);
     bool acceptedTerms =
         //calls the specifcic document of the users
         (await termsandConditionsAcceptanceRef.get()).get('acceptedtc');
-=======
-    DocumentReference termsandConditionsReference =
-    _firestore.collection('users').doc(userService.user.uid);
-    bool acceptedTerms =
-    //calls the specifcic document of the users
-    (await termsandConditionsReference.get()).get('acceptedtc');
->>>>>>> e2ccac9 (add polylines)
 
     //If the terms and conditions is not accepted show the alert dialog
     if (acceptedTerms == false) {
@@ -315,7 +365,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // user defined function
+// user defined function
   void _termsAlert(BuildContext context) {
     // flutter defined function
     showDialog(
@@ -330,52 +380,13 @@ class _MainScreenState extends State<MainScreen> {
           //This allows the state to be able to change in the alert dialog box
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-<<<<<<< HEAD
-            //Makes it so the text can be scrollable
-            return SingleChildScrollView(
-              child: Column(
-                //Row
-                children: <Widget>[
-                  Text(
-                    termsAndConditionsStr,
-                    style: TextStyle(
-                      color: Color.fromRGBO(255, 242, 0, 1.0),
-                      decoration: TextDecoration.none,
-                      fontSize: 18.0,
-                      fontFamily: "Bebas",
-                      fontWeight: FontWeight.w600,
-                    ),
-                    softWrap: true,
-                  ),
-                  //The start of the checkbox
-                  CheckboxListTile(
-                    title:
-                        Text("Click here to accept these Terms and Conditions.",
-=======
                 //Makes it so the text can be scrollable
                 return SingleChildScrollView(
                   child: Column(
                     //Row
                     children: <Widget>[
                       Text(
-                        "These Terms of Use (\“Terms\”) describe the Zip service, how you will be using it as a Rider, and important legal rights and responsibilities that you have in connection with it. These Terms are effective as to the “Last Updated” date above. \n\nPLEASE READ THESE TERMS CAREFULLY BEFORE USING ZIP." +
-                            "1. Your relationship with Zip\n\nBy using the Zip website (www.zipgameday.com) or the Zip mobile application (\“App\”), by telephoning Zip, or by entering a vehicle used by a Zip Driver, you agree to be bound by these Terms.\n\nThese Terms create a contractual relationship between you and Zip. These Terms do not create any commercial or legal relationship of any type between you and any Zip Driver, Rider, or Passenger.\n\nZip (\“we,\” \“our,\” \“us\”) may update these Terms from time to time. Any such amendments will take effect as soon as Zip posts them on its Website or App. By continuing to use Zip after an update, you agree to be bound by the updated Terms." +
-                            "\n\n2. How you use the Service\n\nZip is an app-based event transportation service. It allows people at events who want a short ride by golf cart or pedicab from one location to another (\“Riders\”) to find people who are interested in driving them (\“Drivers\”). As a Rider, you can contact Zip to request a ride, and Zip will try to match you with a Driver who can pick you up and take you where you need to go. Right now, you can contact Zip through the App. These Terms refer to this service as the “\Service.\”" +
-                            "\n\nHere's how the Service works. You contact Zip and request to be picked up at the location that you provide, and to be dropped off at another location not far away. Zip is for short drives, not road trips, so make it a trip less than five miles. Zip will dispatch one of its on-call Drivers to pick you up and drop you off. Zip will choose a Driver for you based on availability, and there may not be a Driver available quickly (or at all). Zip and Zip Drivers have the right to refuse the Service to you or to any Passengers for any reason at any time. If you don’t want to enter the Driver’s vehicle for any reason, you don’t have to. If you do, then just hop in and enjoy the ride. When you reach your destination, it’s nice to tip the Driver, but you don’t have to tip, and there’s no minimum amount if you do tip." +
-                            "\n\nYou may bring one or more friends into the vehicle with you (\“Passengers\”), if your Driver agrees to take them. If you request to bring a Passenger and your Driver agrees, then you agree to be personally responsible and financially liable for the Passenger’s conduct and to make sure the Passenger complies with these Terms to the same extent that you agree to." +
-                            "\n\nIf a Driver or another Rider or Passenger ever does anything that you don’t like in connection with the Service, please tell Zip immediately. We want this to be a great Service that people enjoy using. If anybody sexually harasses you, tell us. If anybody’s a jerk, tell us. If a Driver pressures you for a tip, which they have agreed with us not to do, tell us." +
-                            "\n\nTo use the Service, you must satisfy any eligibility criteria that Zip may adopt at any time. Any other use of this Service is unauthorized. If you use the Service in any unauthorized manner, then you agree to compensate Zip for its attorneys’ fees and any legal costs that may result from Zip’s initiation of any related legal action against you." +
-                            "\n\n3. Your authorizations to Zip\n\nIn order to match Riders with Drivers, Zip may collect some information about you. This may include your name, your phone number, and other information that Zip may request through the website, by phone, or through the App. You agree that Zip may collect this information and share it with Drivers for the limited purpose of helping them identify you at pickup locations or communicate with you about your ride, and may share it with third-party services.\n\nZip values your privacy. Please review our Rider Privacy Policy to learn how we collect and use information about you via the Service. By using the Service, you consent to Zip’s collection and use of information about you as set forth in that policy, and as it may be updated from time to time." +
-                            "\n\n4. The Rider’s Pledge\n\nPlease be courteous to your Driver and act responsibly. Here’s what we mean. When you’re in a Driver’s vehicle, you agree:\n\nDon’t harass a Driver or another Rider or Passenger. Don’t harass them verbally, physically, sexually, or otherwise.\n\nAlways wear your seat belt. If your seat belt doesn’t work, tell your Driver before the vehicle begins moving. If there is not a working seat belt, don’t ride.\n\nIf you receive a Driver’s phone number or other contact information in the course of using the Service, don’t use it for any reason except in connection with the Service. In particular, don’t use it to call them and ask for a date or to hang out, and don’t give the contact information to anybody else.\n\nDon’t do anything illegal.\n\nDon’t bring any illegal drugs or other illegal substances into the vehicle. Don’t bring any alcohol into the vehicle, whether it is an open or closed container.\n\Don’t do anything that might cause an accident. For example, don’t distract the Driver.\n\nIf you are in contact with law enforcement officials or emergency medical personnel, follow their directions." +
-                            "\n\nDon’t use any type of tobacco product in the vehicle, and don’t smoke within twenty feet of it.\n\nFeel free to suggest the quickest route from your pickup location to the dropoff location if you know it, but if your Driver has a preferred route, let the Driver choose the route.\n\nThe Driver is the boss of his or her vehicle. If they ask you to do something, you agree to do so, whether that is to keep the noise level down, not to smoke, or otherwise, so long as they’re not asking you to do anything illegal or that would conflict with these Terms. The Driver also has the right to ask you to leave the vehicle at any time and for any reason.If they ask you to leave the vehicle, you agree to do so.\n\nIf you cause any damage to your Driver’s vehicle or cause the vehicle to require professional cleaning or detailing, you’ll pay the Driver’s reasonable costs of repair or cleaning.\n\nDon’t ask anybody else to violate any of these rules. If you bring any Passengers on the ride with you, make sure they follow them too." +
-                            "\n\n5. Termination\n\nEither you or Zip may immediately terminate these Terms at any time and for any reason, ending your use of the Service.\n\n6. Disclaimers, waiver of liability, and indemnity DISCLAIMER\n\nZIP OFFERS THE SERVICE \“AS IS.\” ZIP DISCLAIMS ALL REPRESENTATIONS AND WARRANTIES, EXPRESS, IMPLIED, OR STATUTORY, EXCEPT THOSE EXPRESSLY CONTAINED IN THESE TERMS, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. ZIP MAKES NO REPRESENTATION, WARRANTY, OR GUARANTEE CONCERNING THE RELIABILITY, TIMELINESS, QUALITY, OR AVAILABILITY OF THE SERVICE.\n\nYOU AGREE THAT YOU ALONE BEAR THE ENTIRE RISK OF USING THE SERVICE, TO THE EXTENT PERMITTED UNDER THE LAW." +
-                            "\n\nWAIVER OF LIABILITY\n\nNEITHER COMPANY NOR ITS DIRECTORS, OFFICERS, SHAREHOLDERS, PARTNERS OR EMPLOYEES (COLLECTIVELY, “REPRESENTATIVES”) IS AN INSURER; THAT YOU CURRENTLY HAVE AND SHALL ALWAYS MAINTAIN INSURANCE COVERING YOU, AND OTHERS WHO MAY BE ON THE PREMISES OR CARTS FOR MEDICAL, DISABILITY, LIFE, AND PROPERTY; THAT RECOVERY FOR ALL SUCH LOSS, DAMAGE AND EXPENSE SHALL BE LIMITED TO ANY SUCH INSURANCE COVERAGE ONLY: AND THAT COMPANY AND REPRESENTATIVES ARE RELEASED FROM ALL LIABILITY DUE TO ACTIVE OR PASSIVE SOLE, JOINT OR SEVERE NEGLIGENCE OF ANY KIND OR DEGREE, THE IMPROPER OPERATION OR NON-OPERATION OF THE CARTS OR APPS, BREACH OF CONTRACT, EXPRESS OR IMPLIED, BREACH OF WARRANTY, EXPRESS OR IMPLIED, OR BY LOSS OR DAMAGE TO OR MALFUNCTION OF APP, CARTS, FACILITIES, OR OPERATORS." +
-                            "THAT SHOULD THERE ARISE ANY LIABILITY ON THE PART OF COMPANY OR REPRESENTATIVES FOR ANY LOSS, DAMAGE OR EXPENSE DUE TO ACTIVE OR PASSIVE SOLE, JOINT OR SEVERE NEGLIGENCE OF ANY KIND OR DEGREE WHICH OCCURS BEFORE OR AFTER THE SIGNING OF THIS AGREEMENT, PRODUCT OR STRICT LIABILITY, BREACH OF WARRANTY, EXPRESS OR IMPLIED, BREACH OF CONTRACT, EXPRESS OR IMPLIED, OR FOR SUBROGATION, CONTRIBUTION OR INDEMNIFICATION, SUCH LIABILITY SHALL BE LIMITED TO THE MAXIMUM SUM OF \$1,000.00 FOR COMPANY AND REPRESENTATIVES.  ANY ACTION AGAINST THE COMPANY MUST BE COMMENCED WITHIN ONE YEAR OF THE ACCRUAL OF THE CAUSE OF ACTION OR SHALL BE BARRED." +
-                            "THE COMPANY NOR ITS REPRESENTATIVES WILL BE LIABLE UNDER ANY CIRCUMSTANCES TO YOU OR TO ANY OTHER PERSON FOR DAMAGES OF ANY TYPE (INCLUDING DIRECT, INDIRECT, LOST PROFIT, ECONOMIC, CONSEQUENTIAL, INCIDENTAL, SPECIAL, EXEMPLARY, OR PUNITIVE DAMAGES), PERSONAL INJURY, PROPERTY DAMAGE, OR FOR ANY CLAIM OR DEMAND AGAINST THE COMPANY BY ANY OTHER PERSON RELATED TO ANY USE OF THE SERVICE."
-                                "\n\nIndemnification & Exculpatory Clause\n\nYou will indemnify and hold Zip and its officers, directors, employees, independent contractors (including Zip Drivers) and agents, and other Zip Riders and/or Passengers, harmless from any claims or expenses (including attorneys’ fees) arising in connection with the Service.  Customer agrees that Company is not an insurer and no insurance coverage is oﬀered herein.  Company is not assuming liability, and, therefore, shall not be liable to Customer for any loss or inability to retrieve data, personal injury or property damage sustained as a result of cart failure, equipment failure, theft, wreck, or any other cause, regardless of whether or not such loss or damage was caused by or contributed to by Company’s negligent performance to any degree in furtherance of this Agreement, any extra contractual or legal duty, strict products liability, or negligent failure to perform any obligation pursuant to this Agreement.  Customer agrees to indemnify the Company and to hold the Company harmless from and against any claims or demands which may be asserted against the Company.\n\n7. Miscellaneous\n\nNo transfer or assignment\n\nThe Service is for you alone. You agree not to assign or transfer your rights under these Terms to any other person, for financial gain or otherwise.\n\nEntire Agreement\n\nThese Terms are the final, complete, and exclusive understanding between the parties. They replace and supersede all previous oral or written communications or agreements between the parties with respect to the subject matter of these Terms. These Terms may not be modified or amended except in writing signed by an authorized representative of Zip or by an updated Terms of Service posted on the Zip website or App." +
-                            "\n\nGoverning Law and Jurisdiction\n\nThese terms will be governed by and construed in accordance with the laws of the state of Alabama. The federal and state courts in Alabama will have jurisdiction over any claim brought under these Terms or in connection with the Service, and the parties hereby consent to the personal jurisdiction of such courts." +
-                            "\n\nSeverability\n\nIf any provision of these Terms is held to be invalid, unenforceable, or illegal, that provision will be severed from the Terms, without effect to any other provisions of the Terms.\n\nResolving disputes\n\nIf you have any dispute with Zip, you agree to contact us in writing before filing a lawsuit and try in good faith to resolve the dispute. If you are not satisfied with that process, then the parties will arbitrate the dispute before an arbitrator that you and Zip agree to in writing in the State of Alabama. If the parties cannot agree on the choice of arbitrator, each party will appoint one individual representative and the two party representatives will, between themselves, choose an arbitrator." +
-                            "\n\nWaiver\n\nThe failure of either party to enforce any provisions of these Terms is not a waiver of the provisions or of the right of that party to subsequently enforce that, or any other, provision of these Terms.\n\n",
+                        termsAndConditionsStr,
                         style: TextStyle(
                           color: Color.fromRGBO(255, 242, 0, 1.0),
                           decoration: TextDecoration.none,
@@ -388,8 +399,7 @@ class _MainScreenState extends State<MainScreen> {
                       //The start of the checkbox
                       CheckboxListTile(
                         title:
-                        Text("Click here to accept these Terms and Conditions?",
->>>>>>> e2ccac9 (add polylines)
+                        Text("Click here to accept these Terms and Conditions.",
                             softWrap: true,
                             style: TextStyle(
                               color: Colors.white,
@@ -397,35 +407,17 @@ class _MainScreenState extends State<MainScreen> {
                               fontFamily: "Bebas",
                               fontWeight: FontWeight.w600,
                             )),
-<<<<<<< HEAD
-                    controlAffinity: ListTileControlAffinity.platform,
-                    value: _checked,
-                    // Changes the value when checked and set state updates the value on screen
-                    onChanged: (bool value) {
-                      setState(() {
-                        _checked = true;
-                        DocumentReference termsandConditionsAcceptanceRef =
-                            _firestore
-                                .collection('users')
-                                .doc(userService.user.uid);
-                        termsandConditionsAcceptanceRef
-                            .update({'acceptedtc': taccepted});
-                      });
-                    },
-                    activeColor: Colors.white,
-                    checkColor: Colors.red,
-=======
                         controlAffinity: ListTileControlAffinity.platform,
                         value: _checked,
                         // Changes the value when checked and set state updates the value on screen
                         onChanged: (bool value) {
                           setState(() {
                             _checked = true;
-                            DocumentReference termsandConditionsReference =
+                            DocumentReference termsandConditionsAcceptanceRef =
                             _firestore
                                 .collection('users')
                                 .doc(userService.user.uid);
-                            termsandConditionsReference
+                            termsandConditionsAcceptanceRef
                                 .update({'acceptedtc': taccepted});
                           });
                         },
@@ -433,7 +425,6 @@ class _MainScreenState extends State<MainScreen> {
                         checkColor: Colors.red,
                       ),
                     ],
->>>>>>> e2ccac9 (add polylines)
                   ),
                 );
               }),
@@ -443,18 +434,10 @@ class _MainScreenState extends State<MainScreen> {
                 "Next",
               ),
               onPressed: () async {
-<<<<<<< HEAD
                 DocumentReference termsandConditionsAcceptanceRef =
                     _firestore.collection('users').doc(userService.user.uid);
                 bool acceptedTerms =
                     (await termsandConditionsAcceptanceRef.get()).get('acceptedtc');
-=======
-                DocumentReference termsandConditionsReference =
-                _firestore.collection('users').doc(userService.user.uid);
-                bool acceptedTerms =
-                (await termsandConditionsReference.get()).get('acceptedtc');
->>>>>>> e2ccac9 (add polylines)
-                ;
                 if (acceptedTerms == true) {
                   Navigator.of(context).pop();
                   _privacyAlert(context);
@@ -524,6 +507,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //_mapScreen = context.findAncestorStateOfType<MapScreen>();
     screenHeight = MediaQuery
         .of(context)
         .size
@@ -538,6 +522,9 @@ class _MainScreenState extends State<MainScreen> {
       body: Stack(children: <Widget>[
         TheMap(
           key: mapScaffoldKey,
+          scrollGesturesEnabled: _scrollGesturesEnabled,
+          tiltGesturesEnabled: _tiltGesturesEnabled,
+          rotateGesturesEnabled: _rotateGesturesEnabled,
         ),
         Align(
           alignment: Alignment.topLeft,
@@ -658,6 +645,7 @@ class _MainScreenState extends State<MainScreen> {
                                 onTap: () async {
                                   setState(() {
                                     bottomSheetStatus = BottomSheetStatus.closed;
+
                                   });
                                   Prediction p = await PlacesAutocomplete.show(
                                       context: context,
@@ -686,9 +674,13 @@ class _MainScreenState extends State<MainScreen> {
                                       _cameraTargetBounds = null;
                                     });
 
+
+
                                     _addDestinationMarker(newDestination);
                                     //await setPolylines();
                                     //await _goToDestination();
+
+
                                   } else {
                                     search_controller.text = '';
                                     this.address = '';
@@ -804,19 +796,24 @@ class _MainScreenState extends State<MainScreen> {
                                     this.details = await _places.getDetailsByPlaceId(v.placeId);
                                     print("details " + this.details.toString());
 
-                                    LatLng destinationLatLng = LatLng(
+                                    LatLng newDestination = LatLng(
                                     this.details.result.geometry.location.lat,
                                     this.details.result.geometry.location.lng);
 
                                     setState(() {
                                       _isMapInteractive = true;
                                     });
+                                    setState(() {
+                                      _scrollGesturesEnabled = false;
+                                      _tiltGesturesEnabled = false;
+                                      _rotateGesturesEnabled = false;
+                                    });
 
-                                    //setState(() {
-                                      //_destinationPin = newDestination;
-                                    //});
+                                    setState(() {
+                                      _destinationPin = newDestination;
+                                    });
 
-                                    //_addDestinationMarker(newDestination);
+                                    _addDestinationMarker(newDestination);
                                     //await setPolylines();
                                     //await _goToDestination();
 
@@ -1136,11 +1133,10 @@ class _MainScreenState extends State<MainScreen> {
         pinDropDestination == true) {
       double length = await this._rideDistance(pinDropDestination);
       price =
-<<<<<<< HEAD
           await paymentService.getAmmount(zipxl, length, currentNumberOfRides);
-=======
+
       await paymentService.getAmmount(zipxl, length, currentNumberOfRides);
->>>>>>> e2ccac9 (add polylines)
+
       print('price calculated');
       setState(() {
         bottomSheetStatus = BottomSheetStatus.confirmation;
@@ -1370,15 +1366,20 @@ class _MainScreenState extends State<MainScreen> {
 ///this is the map class for displaying the google map
 
 class TheMap extends StatefulWidget {
-  TheMap({Key key}) : super(key: key);
+  final bool scrollGesturesEnabled;
+  final bool tiltGesturesEnabled;
+  final bool rotateGesturesEnabled;
+  TheMap({Key key, this.scrollGesturesEnabled, this.tiltGesturesEnabled, this.rotateGesturesEnabled}) : super(key: key);
 
   @override
   State<TheMap> createState() => MapScreen();
 }
 
+
 class MapScreen extends State<TheMap> {
   ///variables and services needed to  initialize the map
   ///and location of the user.
+  //GlobalKey<MapScreen> _mapScreenKey = GlobalKey();
   final DriverService driverService = DriverService();
   LocationService location = LocationService();
   static LatLng _initialPosition;
@@ -1395,6 +1396,11 @@ class MapScreen extends State<TheMap> {
     LatLng(32.62932, -85.46249)
   };
   List<Driver> driversList;
+
+  bool _scrollGesturesEnabled = true;
+  bool _tiltGesturesEnabled = true;
+  bool _rotateGesturesEnabled = true;
+
   void updateMapPins(LatLng destination) {
     setState(() {
       // 更新初始位置标记
@@ -1410,7 +1416,7 @@ class MapScreen extends State<TheMap> {
           markerId: MarkerId('destination'),
           position: destination,
           icon: _destinationIcon,
-          infoWindow: InfoWindow(title: '目的地')));
+          infoWindow: InfoWindow(title: 'destination')));
     });
   }
 
@@ -1433,8 +1439,6 @@ class MapScreen extends State<TheMap> {
   BitmapDescriptor _destinationIcon;
 
   LatLng pinDrop;
-
-
 
 
   // the user's initial location and current location
@@ -1467,71 +1471,70 @@ class MapScreen extends State<TheMap> {
   Widget build(BuildContext context) {
     return new Scaffold(
       //key: mapScaffoldKey,
-        body: _initialPosition == null
-            ? Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-          ),
-        )
-            :
-        //Listener  ( child:
-        GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: _currentPosition,
-            onMapCreated: (GoogleMapController controller) {
-              _setStyle(controller);
-              _controller.complete(controller);
-              LatLngBounds _cameraTargetBounds;
-              //cameraTargetBounds: _cameraTargetBounds;
+      //key: _mapScreenKey,
 
+      body: _initialPosition == null
+          ? Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+        ),
+      )
+          :
+      //Listener  ( child:
+      GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: _currentPosition,
+        onMapCreated: (GoogleMapController controller) {
+          _setStyle(controller);
+          _controller.complete(controller);
+          LatLngBounds _cameraTargetBounds;
 
+          setMapPins();
+          _getUserLocation(); // setPolylines() will be called inside this method
+        },
+        onCameraMoveStarted: () {
+          print("camera moving");
+        },
+        onCameraMove: (position) {
+          _destinationPin = position.target;
+          pinDrop = position.target;
+          print('${position.target}');
+        },
+        onCameraIdle: () async {
+          setMapPins(); // Update the destination pin with the new location
+          await setPolylines(); // Recalculate the route
+          await _goToDestination(); // Move the camera view to the destination
+        },
+        onTap: (LatLng location) async {
+          _destinationPin = location; // 更新目的地位置
+          updateMapPins(location); // 更新地图上的标记
+          await setPolylines(); // 重新计算路径
+          await _goToDestination(); // 将相机视角移动到目的地
+          bool _scrollGesturesEnabled = false;
+          bool _tiltGesturesEnabled = false;
+          bool _rotateGesturesEnabled = false;
+        },
 
-              setMapPins();
-              _getUserLocation(); // setPolylines() will be called inside this method
-            },
-            onCameraMoveStarted: () {
-              print("camera moving");
-            },
-            onCameraMove: (position) {
-              _destinationPin = position.target;
-              pinDrop = position.target;
-              print('${position.target}');
-            },
-            onCameraIdle: () async {
-              setMapPins(); // Update the destination pin with the new location
-              await setPolylines(); // Recalculate the route
-              await _goToDestination(); // Move the camera view to the destination
-            },
-            onTap: (LatLng location) async {
+        zoomGesturesEnabled: true,
+        scrollGesturesEnabled: widget.scrollGesturesEnabled,
+        tiltGesturesEnabled: widget.tiltGesturesEnabled,
+        rotateGesturesEnabled: widget.rotateGesturesEnabled,
+        markers: _markers,
+        polylines: _polylines,
+        myLocationButtonEnabled: false,
+        myLocationEnabled: true,
+        mapToolbarEnabled: true,
+      )
 
-              _destinationPin = location; // 更新目的地位置
-              updateMapPins(location); // 更新地图上的标记
-              await setPolylines(); // 重新计算路径
-              await _goToDestination(); // 将相机视角移动到目的地
-            },
+      ,
 
+      //),
 
-
-
-
-          zoomGesturesEnabled:
-    true
-    ,
-    markers: _markers,
-    polylines: _polylines,
-    myLocationButtonEnabled: false,
-    myLocationEnabled: true,
-    mapToolbarEnabled: true,
-    )
-    ,
-
-    //),
-
-    //floatingActionButton: FloatingActionButton(
-    //onPressed: () => _goToMe(),
-    //child: Icon(Icons.my_location),
-    //backgroundColor: Color.fromRGBO(255, 242, 0, 1.0)));
-    //return new Scaffold();}
+      //floatingActionButton: FloatingActionButton(
+      //onPressed: () => _goToMe(),
+      //child: Icon(Icons.my_location),
+      //backgroundColor: Color.fromRGBO(255, 242, 0, 1.0)));
+      //return new Scaffold();}
     );
   }
 
@@ -1604,7 +1607,8 @@ class MapScreen extends State<TheMap> {
       _polylines.clear(); // Clear the previous polylines
       String apiKey = "AIzaSyDsPh6P9PDFmOqxBiLXpzJ1sW4kx-2LN5g";
       PolylinePoints polylinePoints = PolylinePoints();
-      List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
+      List<PointLatLng> result = await polylinePoints
+          .getRouteBetweenCoordinates(
           apiKey,
           _initialPosition.latitude,
           _initialPosition.longitude,
@@ -1650,6 +1654,13 @@ class MapScreen extends State<TheMap> {
       controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
           target: LatLng(_destinationPin.latitude, _destinationPin.longitude),
           zoom: 14.47)));
+      setState(() {
+        _scrollGesturesEnabled = false;
+        _tiltGesturesEnabled = false;
+        _rotateGesturesEnabled = false;
+      });
+
+      print("Destination is not set.");
     }
   }
 
